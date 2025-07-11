@@ -8,31 +8,41 @@ import userRoutes from './routes/userRoutes.js';
 import assessmentRoutes from './routes/assessmentRoutes.js';
 import gabayRoutes from './routes/gabayRoutes.js';
 
+// Import models
+import User from './models/User.js';
+import Assessment from './models/Assessment.js';
+import Roadmap from './models/Roadmap.js';
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Middleware
-app.use(cors()); // Allows your React frontend to communicate with this backend
-app.use(express.json()); // Allows server to accept JSON data in request body
+app.use(cors());
+app.use(express.json());
 
 // API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/gabay', gabayRoutes);
 
+// --- Define Model Associations Here ---
+User.hasMany(Assessment, { foreignKey: 'userId' });
+Assessment.belongsTo(User, { foreignKey: 'userId' });
+
+Assessment.hasMany(Roadmap, { as: 'roadmaps', foreignKey: 'assessmentId' });
+Roadmap.belongsTo(Assessment, { as: 'assessment', foreignKey: 'assessmentId' });
+
+
 // --- Database Connection and Server Startup ---
 const startServer = async () => {
     try {
-        // This will create the database if it doesn't exist
         await sequelize.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
         console.log("Database created or already exists.");
 
-        // Switch to the created database
         await sequelize.authenticate();
         console.log('Connection to the database has been established successfully.');
 
-        // This will create the tables based on your models if they don't exist
-        await sequelize.sync({ alter: true }); // Use `alter: true` during development
+        await sequelize.sync({ alter: true });
         console.log('All models were synchronized successfully.');
 
         app.listen(PORT, () => {

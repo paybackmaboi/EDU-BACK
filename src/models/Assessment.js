@@ -26,7 +26,9 @@ const Assessment = db.define('Assessment', {
     }
 });
 
-User.hasMany(Assessment, { foreignKey: 'userId' });
-Assessment.belongsTo(User, { foreignKey: 'userId' });
+// REMOVE these lines from this file
+// User.hasMany(Assessment, { foreignKey: 'userId' });
+// Assessment.belongsTo(User, { foreignKey: 'userId' });
+// Assessment.hasMany(Roadmap, { foreignKey: 'assessmentId' }); // <-- REMOVE
 
 export default Assessment;

@@ -11,26 +11,29 @@ const generateRoadmapPrompt = (jobTitle, quizScore) => {
 
         Your tasks:
         1.  Analyze the job title for transferable skills.
-        2.  Based on the skills and a high score (${quizScore}/5), recommend a suitable entry-level tech career like "Data Analyst" or "QA Automation Engineer".
-        3.  Generate a 5-module learning roadmap for this career. Prioritize free, high-quality resources from platforms like freeCodeCamp, YouTube, Coursera (free courses), and TESDA Online.
-        4.  Provide a realistic entry-level monthly salary range in PHP.
+        2.  Based on the skills and a high score (${quizScore}/5), recommend 3 suitable entry-level tech careers. For each, provide a "reason" explaining why it's a good fit.
+        3.  For each recommended career, generate a 5-module learning roadmap. Prioritize free, high-quality resources from platforms like freeCodeCamp, YouTube, Coursera (free courses), and TESDA Online.
+        4.  Provide a realistic entry-level monthly salary range in PHP for each career.
 
-        Respond ONLY with a valid JSON object matching this structure:
-        {
-          "careerTitle": "string",
-          "description": "string",
-          "salary_range_php": "string",
-          "modules": [
-            {
-              "title": "string",
-              "duration": "string",
-              "skills": ["string"],
-              "resources": [
-                { "name": "string", "url": "string", "provider": "string" }
-              ]
-            }
-          ]
-        }
+        Respond ONLY with a valid JSON array of objects matching this structure:
+        [
+          {
+            "careerTitle": "string",
+            "description": "string",
+            "reason": "string",
+            "salary_range_php": "string",
+            "modules": [
+              {
+                "title": "string",
+                "duration": "string",
+                "skills": ["string"],
+                "resources": [
+                  { "name": "string", "url": "string", "provider": "string" }
+                ]
+              }
+            ]
+          }
+        ]
     `;
 };
 
@@ -50,10 +53,9 @@ export const createAssessmentAndRoadmap = async (req, res) => {
         });
         
         // --- Clean and Parse AI Response ---
-        // The response is often wrapped in markdown backticks, so we clean it.
         let responseText = aiResponse.data.candidates[0].content.parts[0].text;
         responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-        const roadmapData = JSON.parse(responseText);
+        const roadmapsData = JSON.parse(responseText);
 
         // --- Save to Database ---
         const assessment = await Assessment.create({
@@ -62,20 +64,21 @@ export const createAssessmentAndRoadmap = async (req, res) => {
             userId,
         });
 
-        const roadmap = await Roadmap.create({
-            careerTitle: roadmapData.careerTitle,
-            description: roadmapData.description,
-            modules: roadmapData.modules, // Storing the JSON directly
-            assessmentId: assessment.id,
-        });
+        const createdRoadmaps = await Promise.all(roadmapsData.map(roadmapData => {
+            return Roadmap.create({
+                careerTitle: roadmapData.careerTitle,
+                description: roadmapData.description,
+                reason: roadmapData.reason,
+                modules: roadmapData.modules, // Storing the JSON directly
+                assessmentId: assessment.id,
+                salary_range_php: roadmapData.salary_range_php
+            });
+        }));
         
         // --- Send response to Frontend ---
         res.status(201).json({
             assessment,
-            roadmap: {
-                ...roadmap.toJSON(),
-                salary_range_php: roadmapData.salary_range_php // Add salary from AI response
-            }
+            roadmaps: createdRoadmaps.map(roadmap => roadmap.toJSON())
         });
 
     } catch (error) {

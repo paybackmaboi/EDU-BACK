@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize as db } from '../config/database.js';
-import Assessment from './Assessment.js';
+// REMOVE THIS LINE: import Assessment from './Assessment.js';
 
 const Roadmap = db.define('Roadmap', {
     id: {
@@ -16,21 +16,26 @@ const Roadmap = db.define('Roadmap', {
         type: DataTypes.TEXT,
         allowNull: false
     },
+    reason: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    salary_range_php: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     modules: {
         type: DataTypes.JSON, // Store the roadmap modules as JSON
         allowNull: false
     },
-    // Foreign Key for Assessment
     assessmentId: {
         type: DataTypes.INTEGER,
-        references: {
-            model: Assessment,
-            key: 'id'
-        }
+        allowNull: false
+        // REMOVE the 'references' object from here
     }
 });
 
-Assessment.hasOne(Roadmap, { foreignKey: 'assessmentId' });
-Roadmap.belongsTo(Assessment, { foreignKey: 'assessmentId' });
+// REMOVE this line from this file
+// Roadmap.belongsTo(Assessment, { foreignKey: 'assessmentId' });
 
 export default Roadmap;
