@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({path: './.env'});
+dotenv.config(); // Simplified dotenv config
 
 import express from 'express';
 import cors from 'cors';
@@ -16,8 +16,15 @@ import Roadmap from './models/Roadmap.js';
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+// --- CORS Configuration to Allow Frontend to Connect ---
+const corsOptions = {
+  // Replace with your frontend's actual Render URL
+  origin: 'https://edu-front-eaiu.onrender.com', 
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions)); // Use the new corsOptions
 app.use(express.json());
 
 // API Routes
@@ -36,8 +43,8 @@ Roadmap.belongsTo(Assessment, { as: 'assessment', foreignKey: 'assessmentId' });
 // --- Database Connection and Server Startup ---
 const startServer = async () => {
     try {
-        await sequelize.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
-        console.log("Database created or already exists.");
+        // This line is removed as it's not needed in production
+        // await sequelize.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
 
         await sequelize.authenticate();
         console.log('Connection to the database has been established successfully.');
