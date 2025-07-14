@@ -59,7 +59,7 @@ export const loginUser = async (req, res) => {
 // Helper function to generate JWT
 const generateToken = (id) => {
     // We'll add a secret to the .env file later
-    return jwt.sign({ id }, 'your_jwt_secret', { 
+    return jwt.sign({ id }, process.env.JWT_SECRET, { 
         expiresIn: '30d' 
     });
 };

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${API_KEY}`;
 
 const cleanAiResponse = (responseText) => {
     return responseText.replace(/```json/g, '').replace(/```/g, '').trim();

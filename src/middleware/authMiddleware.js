@@ -10,7 +10,7 @@ export const protect = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
 
             // Verify token
-            const decoded = jwt.verify(token, 'your_jwt_secret'); // Use the same secret as in userController
+            const decoded = jwt.verify(token, process.env.JWT_SECRET); // Use the same secret as in userController
 
             // Get user from the token (excluding the password)
             req.user = await User.findByPk(decoded.id, {
