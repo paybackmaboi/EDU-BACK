@@ -11,7 +11,7 @@ const generateRoadmapPrompt = (jobTitle, quizScore) => {
 
         Your tasks:
         1.  Analyze the job title for transferable skills.
-        2.  Based on the skills and a high score (${quizScore}/5), recommend 3 suitable entry-level tech careers and provide it in 5 seconds. For each, provide a "reason" explaining why it's a good fit.
+        2.  Based on the skills and a high score (${quizScore}/5), recommend 2 suitable entry-level tech careers and provide it in 5 seconds. For each, provide a "reason" explaining why it's a good fit.
         3.  For each recommended career, generate a 5-module learning roadmap. Prioritize free, high-quality resources from platforms like freeCodeCamp,  YouTube, Coursera (free courses), and TESDA Online.
         4.  Provide a realistic entry-level monthly salary range in PHP for each career.
         5.  For the youtube resources, ensure that the links are from channels are still up-to-date and available for learning.
@@ -40,7 +40,7 @@ const generateRoadmapPrompt = (jobTitle, quizScore) => {
 
 export const createAssessmentAndRoadmap = async (req, res) => {
     const { jobTitle, quizScore } = req.body;
-    const userId = req.user.id; // From our protect middleware
+    const userId = req.user.id; 
 
     if (!jobTitle || quizScore === undefined) {
         return res.status(400).json({ message: 'Job title and quiz score are required.' });
@@ -70,7 +70,7 @@ export const createAssessmentAndRoadmap = async (req, res) => {
                 careerTitle: roadmapData.careerTitle,
                 description: roadmapData.description,
                 reason: roadmapData.reason,
-                modules: roadmapData.modules, // Storing the JSON directly
+                modules: roadmapData.modules, 
                 assessmentId: assessment.id,
                 salary_range_php: roadmapData.salary_range_php
             });
