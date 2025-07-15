@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 8000;
 // --- CORS Configuration to Allow Frontend to Connect ---
 const corsOptions = {
   // Replace with your frontend's actual Render URL
-  origin: 'https://edu-front-eaiu.onrender.com', 
+  origin: 'https://edu-front-fkan.onrender.com', 
   optionsSuccessStatus: 200
 };
 
@@ -43,8 +43,7 @@ Roadmap.belongsTo(Assessment, { as: 'assessment', foreignKey: 'assessmentId' });
 // --- Database Connection and Server Startup ---
 const startServer = async () => {
     try {
-        // This line is removed as it's not needed in production
-        // await sequelize.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
+        
 
         await sequelize.authenticate();
         console.log('Connection to the database has been established successfully.');
