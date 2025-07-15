@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Simplified dotenv config
+dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
@@ -16,17 +16,29 @@ import Roadmap from './models/Roadmap.js';
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// --- CORS Configuration to Allow Frontend to Connect ---
+// --- CORS Configuration ---
+const allowedOrigins = [
+  'https://edu-front-fkan.onrender.com', // Your production frontend
+  'http://localhost:3000'               // Your local development environment
+];
+
 const corsOptions = {
-  // Replace with your frontend's actual Render URL
-  origin: 'https://edu-front-fkan.onrender.com', 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200
 };
 
-// Middleware
-app.use(cors(corsOptions)); 
+// --- Middleware ---
+app.use(cors(corsOptions));
+app.use(express.json()); // To parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // To parse URL-encoded request bodies
 
-// API Routes
+// --- API Routes ---
 app.use('/api/users', userRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/gabay', gabayRoutes);
@@ -42,8 +54,6 @@ Roadmap.belongsTo(Assessment, { as: 'assessment', foreignKey: 'assessmentId' });
 // --- Database Connection and Server Startup ---
 const startServer = async () => {
     try {
-        
-
         await sequelize.authenticate();
         console.log('Connection to the database has been established successfully.');
 
