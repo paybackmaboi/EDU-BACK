@@ -14,7 +14,7 @@ const generateRoadmapPrompt = (jobTitle, quizScore) => {
         2.  Based on the skills and a high score (${quizScore}/5), recommend 2 suitable entry-level tech careers and provide it in 5 seconds. For each, provide a "reason" explaining why it's a good fit.
         3.  For each recommended career, generate a 5-module learning roadmap. Prioritize free, high-quality resources from platforms like freeCodeCamp,  YouTube, Coursera (free courses), and TESDA Online.
         4.  Provide a realistic entry-level monthly salary range in PHP for each career.
-        5.  For the youtube resources, ensure that the links are from channels are still up-to-date and available for learning.
+        
 
         Respond ONLY with a valid JSON array of objects matching this structure:
         [
